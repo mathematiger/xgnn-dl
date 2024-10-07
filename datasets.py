@@ -1415,7 +1415,7 @@ class GraphMotifAugmenter():
         'edges': [(0, 1), (1, 2), (2, 3), (3, 4), (4, 2), (0, 3)],
     }
 
-    def __init__(self, motif='house', num_motifs=0, orig_graph=None, total_motifs=None):
+    def __init__(self, motif=None, num_motifs=0, orig_graph=None, total_motifs=None):
         self.motif = motif
         self.num_motifs = num_motifs
 
@@ -1437,10 +1437,10 @@ class GraphMotifAugmenter():
         self._graph = copy.deepcopy(self.orig_graph)
         self._list_node_in_motif_or_not = [0]*self.orig_graph.number_of_nodes()
         self._number_nodes_of_orig_graph = self.orig_graph.number_of_nodes()
-
-        if not isinstance(motif, list):
-            self.motif = [motif]
-        self.add_n_motifs()
+        if self.motif is not None:
+            if not isinstance(motif, list):
+                self.motif = [motif]
+            self.add_n_motifs()
 
     def extend_list_node_in_motif_or_not(self):
         len_motif = 0
@@ -1454,6 +1454,7 @@ class GraphMotifAugmenter():
         self._list_node_in_motif_or_not.extend([1]*len_motif)
 
     def add_n_motifs(self):
+        #self.motif is a list of motif-dicts
         for mot in self.motif:
             for _ in range(self.num_motifs//self.total_motifs):
                 self.add_motif(mot, self._graph,
@@ -1501,7 +1502,7 @@ class GraphMotifAugmenter():
 
         if motif == 'house':
             motif = GraphMotifAugmenter.house_motif
-        assert isinstance(motif, dict)
+        assert isinstance(motif, dict), type(motif)
         # tests for correctness
         nodes_in_motif = len(motif['labels'])
         assert 'labels' in motif, "The motif does not have labels."

@@ -32,9 +32,14 @@ def create_gnn_and_dataset(dataset_name,
     if retrain:
         if gnn is None:
             raise Exception("GNN is None")
-        motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
-        dataset, dataset_class = SyntheticDatasets.new_dataset_motif(
-            num_nodes=num_nodes, motif=motif)
+        print('debug ds', dataset)
+        if not isinstance(dataset, dict):
+            motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
+            dataset, dataset_class = SyntheticDatasets.new_dataset_motif(
+                num_nodes=num_nodes, motif=motif)
+        else:
+            dataset, dataset_class = SyntheticDatasets.new_dataset_n_motif(
+                num_nodes=num_nodes, motifs=dataset)
 
         if gnn == 'SAGE':
             gnn_cl = GNNDatasets(
@@ -51,13 +56,12 @@ def create_gnn_and_dataset(dataset_name,
     return gnn_cl, dataset, dataset_class
 
 
-def create_test_dataset(dataset_name='house', num_nodes=500):
-    if isinstance(dataset_name, str):
+def create_test_dataset(dataset_name='house', num_nodes=500, dataset='house'):
+    if not isinstance(dataset, dict):
         motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
-        dataset, _ = SyntheticDatasets.new_dataset_motif(
+        dataset, dataset_class = SyntheticDatasets.new_dataset_motif(
             num_nodes=num_nodes, motif=motif)
     else:
-        assert isinstance(dataset_name[0], dict), dataset_name
-        dataset, _ = SyntheticDatasets.new_dataset_n_motif(
-            num_nodes=num_nodes, motifs=dataset_name)
+        dataset, dataset_class = SyntheticDatasets.new_dataset_n_motif(
+            num_nodes=num_nodes, motifs=dataset)
     return dataset

@@ -106,13 +106,13 @@ class CEUtils():
                 return n-1
         elif isinstance(ce, OWLNaryBooleanClassExpression):
             for op in ce.operands():
-                result = CEUtils.return_nth_class(op, n-1)
+                result = CEUtils.return_nth_class(op, n)
                 if isinstance(result, OWLClass):
                     return result
-            return 0
+            return False
         elif isinstance(ce, OWLObjectRestriction):
             return CEUtils.return_nth_class(ce._filler, n)
-        return 0
+        return False
 
     @staticmethod
     def return_nth_restriction(ce, n):

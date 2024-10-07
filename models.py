@@ -210,6 +210,7 @@ class GNNDatasets():
             self.type_to_classify = type_to_classify
 
         # ensure that the data has train, val and test splits
+        print('debug gnndata', self.data, type(self.data))
         if not hasattr(self.data[self.type_to_classify], 'train_mask'):
             dataprocessor = PyGDataProcessor(self.data, self.type_to_classify)
             self.data = dataprocessor.add_training_validation_test()

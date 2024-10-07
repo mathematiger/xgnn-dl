@@ -1,5 +1,6 @@
 import torch
 from torch_geometric.data import HeteroData
+from datasets import GraphLibraryConverter
 
 
 class PyGUtils():
@@ -25,11 +26,13 @@ class PyGUtils():
             list_ids_end.append(end_id)
             hetero_graph[(start_type, edge_type, end_type)].edge_index = torch.tensor(
                 [list_ids_start, list_ids_end])
-            changes_made = True
+            hetero_graph[(end_type, edge_type, start_type)].edge_index = torch.tensor(
+                [list_ids_end, list_ids_start])
         else:
             hetero_graph[start_type, edge_type, end_type].edge_index = torch.tensor([
                                                                                     [start_id], [end_id]])
-            changes_made = True
+            hetero_graph[end_type, edge_type, start_type].edge_index = torch.tensor([
+                                                                                    [end_id], [start_id]])
 
         return hetero_graph
 
@@ -38,6 +41,12 @@ class PyGUtils():
         """
         This makes a heterogenous graph bidirected and checks on validity: Each edge should exist in 2 directions.
         """
+        print('debug makebidirected', hetero_graph,
+              hetero_graph['1'].num_nodes)
+        print('debug makebidirected', hetero_graph['1', 'to', '3'].edge_index)
+        print('debug makebidirected', hetero_graph['3', 'to', '1'].edge_index)
+        if hetero_graph.is_undirected():  #this code does not really work
+            return hetero_graph
         for edge_type in hetero_graph.edge_types:
             start_type, relation_type, end_type = edge_type
 
@@ -64,6 +73,7 @@ class PyGUtils():
                         hetero_graph, end_type, relation_type, start_type, end_id.item(), start_id.item())
         assert isinstance(
             hetero_graph, HeteroData), "The graph is not a heterogenous graph."
+        print('debug pygutils', hetero_graph)
         assert hetero_graph.is_undirected(
         ), f"The graph {hetero_graph} is not undirected."
         return hetero_graph
