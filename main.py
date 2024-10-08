@@ -29,7 +29,7 @@ set_seed(1)
 # setup for parameters
 
 retrain_GNN_and_data = True
-datasets = {'house': 'house', 'circle': 'circle', 'star': 'star', 'wheel': 'wheel', 'mutag': [{'positive': ['mutagNO2', 'mutagNH2'], 'negative': []}],
+datasets = {'house': 'house', 'circle': 'circle', 'star': 'star', 'wheel': 'wheel', 'mutag': [{'positive': ['mutagNO2', 'mutagNH2'], 'negative': ['circle']}],
             'combi': {'positive': ['house', 'wheel'], 'negative': ['circle',  'star']},
             }
 
