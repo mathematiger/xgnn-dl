@@ -1,7 +1,9 @@
+import sys
 import pickle
 import os
 from syntheticdatasets import SyntheticDatasets
 from models import GNNDatasets
+from datetime import datetime
 
 
 def create_gnn_and_dataset(dataset_name,
@@ -32,7 +34,6 @@ def create_gnn_and_dataset(dataset_name,
     if retrain:
         if gnn is None:
             raise Exception("GNN is None")
-        print('debug ds', dataset)
         if not isinstance(dataset, dict):
             motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
             dataset, dataset_class = SyntheticDatasets.new_dataset_motif(
@@ -65,3 +66,39 @@ def create_test_dataset(dataset_name='house', num_nodes=500, dataset='house'):
         dataset, dataset_class = SyntheticDatasets.new_dataset_n_motif(
             num_nodes=num_nodes, motifs=dataset)
     return dataset
+
+
+class DualLogger:
+    def __init__(self, file_path):
+        self.terminal = sys.stdout
+        self.log = open(file_path, "a")  # Append mode
+
+    def write(self, message):
+        self.terminal.write(message)  # Print to console
+        self.log.write(message)  # Write to file
+
+    def flush(self):
+        self.terminal.flush()
+        self.log.flush()
+
+    @staticmethod
+    def cleanup_old_logs(directory, keep=10):
+        # Get all files in the directory, sorted by modification time (oldest first)
+        files = sorted(
+            [os.path.join(directory, f) for f in os.listdir(directory)
+             if os.path.isfile(os.path.join(directory, f))],
+            key=os.path.getmtime
+        )
+
+        # Remove files if more than the specified 'keep' amount
+        if len(files) > keep:
+            for file in files[:-keep]:
+                os.remove(file)
+
+
+if __name__ == '__main__':
+    # Create 'content/Results' directory if it doesn't exist
+    output_dir = "content/Results"
+    os.makedirs(output_dir, exist_ok=True)
+    # Redirect all prints to both console and file
+    sys.stdout = DualLogger(os.path.join(output_dir, "output_log.txt"))

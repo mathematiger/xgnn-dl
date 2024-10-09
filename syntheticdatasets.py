@@ -32,6 +32,15 @@ class SyntheticDatasets():
         'labels': ['A', 'A', 'A', 'A', 'A', 'A', 'N', 'O', 'O'],
         'edges': [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 0), (0, 6), (6, 7), (6, 8)]
     }
+    motif_NO2 = {
+        'labels': ['A', 'O', 'O'],
+        'edges': [(0, 1), (0, 2)]
+    }
+
+    motif_NH2 = {
+        'labels': ['A', 'H', 'H'],
+        'edges': [(0, 1), (0, 2)]
+    }
 
     @staticmethod
     def new_dataset_motif(num_nodes, motif, num_motifs=None, num_edges=3):
